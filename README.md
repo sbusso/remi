@@ -32,7 +32,29 @@ sure this works by running
 
     cucumber
 
-All of the test should pass.
+All of the tests should pass.
+
+## Remi Jobs
+
+````ruby
+class MyCoolJob
+  include Remi::Job
+  include Remi::Refinements::Daru
+  using Remi::Refinements::Daru
+
+  define_source :my_source_csv_file, Remi::DataSource::CsvFile
+
+  define_source :my_target_csv_file, Remi::DataTarget::CsvFile
+
+  define_transform :my_transform do
+    my_target_csv_file.df = my_source_csv_file.df.dup
+    my_target_csv_file.df[:my_date_field] = my_source_csv_file.df[:my_date_field].recode do |v|
+      Date.strptime(v, '%m/%d/%Y').strftime('%Y-%m-%d')
+    end
+  end
+
+end
+````
 
 ## Transforming Data
 
